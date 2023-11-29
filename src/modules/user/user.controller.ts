@@ -2,6 +2,7 @@ import { Controller, Get, Post, Delete, Body, Param } from '@nestjs/common';
 import { ApiTags, ApiBody, ApiParam } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CreateUserDto } from '../common/dtos/createUserDto.dto';
+import { UpdatePasswordDto } from './../common/dtos/updatePassword.dto';
 import { User } from '../common/entities/user.entity';
 
 @ApiTags('user')
@@ -41,6 +42,16 @@ export class UserController {
     @Param('email') username: string,
   ): Promise<User | string> {
     return await this.userService.findByEmail(username);
+  }
+
+  @Post('updatePassword/:id')
+  @ApiParam({ name: 'id' })
+  @ApiBody({ type: UpdatePasswordDto })
+  async updatePassword(
+    @Param('id') id: number,
+    @Body() updatePasswordDto: UpdatePasswordDto,
+  ): Promise<User | string> {
+    return await this.userService.updatePassword(id, updatePasswordDto);
   }
 
   @Delete(':id')

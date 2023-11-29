@@ -1,3 +1,4 @@
+import { UpdatePasswordDto } from './../common/dtos/updatePassword.dto';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../common/dtos/createUserDto.dto';
 import { User } from '../common/entities/user.entity';
@@ -16,7 +17,6 @@ export class UserService {
   }
 
   async create(createUserDto: CreateUserDto): Promise<User | string> {
-    // find if the user exists with the same email
     const user = await this.uow
       .getRepository(User)
       .findOneBy({ email: createUserDto.email });
@@ -42,6 +42,19 @@ export class UserService {
     if (!user) {
       return 'User not found';
     }
+    return user;
+  }
+
+  async updatePassword(
+    id: number,
+    updatePasswordDto: UpdatePasswordDto,
+  ): Promise<User | string> {
+    const user = await this.uow.getRepository(User).findOneBy({ id: id });
+    if (!user) {
+      return 'User not found';
+    }
+    user.password = updatePasswordDto.password;
+    await this.uow.getRepository(User).update(id, user);
     return user;
   }
 
